@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<title>День программиста</title>
+
+	<style>
+		body {
+			width: 100vw;
+			height: 100vh;
+			margin: 0;
+		}
+		#msg {
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+<div id="msg"></div>
+</body>
+<script type="text/javascript">
+	var today = new Date();
+	var startOfYear = new Date(today.getFullYear(), 0, 0);
+
+	var dayMilliseconds = 24*60*60*1000;
+	var dayOfYear = Math.floor((today - startOfYear) / dayMilliseconds);
+
+	var programmersDay = Math.pow(2, 8);
+
+	function setText (text) {
+		document.getElementById('msg').innerHTML = text;
+	}
+
+	/**
+	 * Падежи https://gist.github.com/realmyst/1262561
+	 */
+	function declOfNum(number, titles) {
+		var cases = [2, 0, 1, 1, 1, 2];
+		return titles[ (number%100>4 && number%100<20)? 2 : cases[(number%10<5)?number%10:5] ];
+	}
+
+	var daysWords = ['день', 'дня', 'дней'];
+	var leftWords = ['остался', 'осталось', 'осталось'];
+
+	var diff = programmersDay - dayOfYear;
+	if (diff > 0) {
+		setText(`До дня программиста ${declOfNum(diff, leftWords)} ${diff} ${declOfNum(diff, daysWords)}...`);
+	} else if (diff < 0) {
+		setText(`День программиста прошёл ${-diff} ${declOfNum(-diff, daysWords)} назад.`);
+	} else {
+		setText('С днём программиста!');
+	}
+</script>
+</html>
