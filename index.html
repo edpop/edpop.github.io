@@ -19,6 +19,9 @@
 		.navbar a, .navbar div {
 			float: left;
 		}
+		.navbar .lang {
+			float: right;
+		}
 		.navbar a, .dropdown .dropbtn {
 			font-size: 16px;
 			padding: 14px 16px;
@@ -56,37 +59,80 @@
 </head>
 <body>
 <div class="navbar">
-	<a href="https://github.com/edpop">Home</a>
+	<a href="https://github.com/edpop" class="tr" data-trid="home">Home</a>
 	<div class="dropdown">
-		<button class="dropbtn">Tools ▼</button>
+		<button class="dropbtn tr" data-trid="tools">Tools ▼</button>
 		<div class="dropdown-content">
 			<a href="/projects/references-translate/" target="_blank">Помощник перевода списка литературы для научного журнала</a>
 			<a href="/projects/programmers-day/" target="_blank">Узнать, когда будет день программиста</a>
 		</div>
 	</div>
+	<a href="#" class="lang" data-lang="ru">RU</a>
+	<a href="#" class="lang" data-lang="en">EN</a>
 </div>
 </body>
 <script>
 /**
  * Dropdown toggle
  */
-const dropButtons = document.getElementsByClassName("dropbtn");
-const dropDownContent = document.getElementsByClassName("dropdown-content");
-for (let i=0; i< dropButtons.length; ++i) {
-	dropButtons[i].onclick = () => {
-		for (let j=0; j<dropDownContent.length; ++j) {
-			dropDownContent[j].classList.toggle("show");
+(function () {
+	const dropButtons = document.getElementsByClassName("dropbtn");
+	const dropDownContent = document.getElementsByClassName("dropdown-content");
+	for (let i=0; i< dropButtons.length; ++i) {
+		dropButtons[i].onclick = () => {
+			for (let j=0; j<dropDownContent.length; ++j) {
+				dropDownContent[j].classList.toggle("show");
+			}
+		};
+	}
+	window.onclick = (e) => {
+		if (!e.target.matches(".dropbtn")) {
+			for (let j=0; j<dropDownContent.length; ++j) {
+				if (dropDownContent[j].classList.contains("show")) {
+					dropDownContent[j].classList.remove("show");
+				};
+			}
 		}
 	};
-}
-window.onclick = (e) => {
-	if (!e.target.matches(".dropbtn")) {
-		for (let j=0; j<dropDownContent.length; ++j) {
-			if (dropDownContent[j].classList.contains("show")) {
-				dropDownContent[j].classList.remove("show");
+}());
+
+/**
+ * Translations
+ */
+(function () {
+	const tr = {
+		"home": "Домой",
+		"tools": "Инструменты ▼"
+	};
+	const translations = {};
+	const elementsTr = document.getElementsByClassName("tr");
+	for (let i=0; i<elementsTr.length; ++i) {
+		const element = elementsTr[i];
+		const trid = element.getAttribute("data-trid");
+		const translation = tr[trid];
+		if (translation) {
+			translations[trid] = {
+				en: element.innerHTML,
+				ru: translation
 			};
 		}
 	}
-};
+	function translate (lang) {
+		const elements = document.getElementsByClassName("tr");
+		for (let i=0; i<elements.length; ++i) {
+			const trid = elements[i].getAttribute("data-trid");
+			const translation = translations[trid][lang];
+			if (translation) {
+				elements[i].innerHTML = translation;
+			}
+		}
+	}
+	const elementsLang = document.getElementsByClassName("lang");
+	for (let i=0; i<elementsLang.length; ++i) {
+		elementsLang[i].onclick = () => {
+			translate(elementsLang[i].getAttribute("data-lang"));
+		}
+	}
+}());
 </script>
 </html>
