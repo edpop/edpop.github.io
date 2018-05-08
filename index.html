@@ -52,6 +52,10 @@
 		.dropdown-content a:hover {
 			background-color: #ddd;
 		}
+		.lang.active {
+			text-decoration: underline;
+			cursor: default;
+		}
 		.show {
 			display: block;
 		}
@@ -68,7 +72,7 @@
 		</div>
 	</div>
 	<a href="#" class="lang" data-lang="ru">RU</a>
-	<a href="#" class="lang" data-lang="en">EN</a>
+	<a href="#" class="lang active" data-lang="en">EN</a>
 </div>
 </body>
 <script>
@@ -118,12 +122,22 @@
 		}
 	}
 	function translate (lang) {
-		const elements = document.getElementsByClassName("tr");
-		for (let i=0; i<elements.length; ++i) {
-			const trid = elements[i].getAttribute("data-trid");
+		const elementsTr = document.getElementsByClassName("tr");
+		for (let i=0; i<elementsTr.length; ++i) {
+			const trid = elementsTr[i].getAttribute("data-trid");
 			const translation = translations[trid][lang];
 			if (translation) {
-				elements[i].innerHTML = translation;
+				elementsTr[i].innerHTML = translation;
+			}
+		}
+
+		const elementsLang = document.getElementsByClassName("lang");
+		for (let i=0; i<elementsLang.length; ++i) {
+			const element = elementsLang[i];
+			if (element.getAttribute("data-lang") === lang) {
+				element.classList.add("active");
+			} else {
+				element.classList.remove("active");
 			}
 		}
 	}
@@ -132,6 +146,9 @@
 		elementsLang[i].onclick = () => {
 			translate(elementsLang[i].getAttribute("data-lang"));
 		}
+	}
+	if (navigator.language === "ru-RU") {
+		translate("ru");
 	}
 }());
 </script>
