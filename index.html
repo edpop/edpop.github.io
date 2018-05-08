@@ -2,9 +2,91 @@
 <html lang="ru">
 <head>
 	<meta charset="UTF-8">
+
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+		}
+		.navbar {
+			font-family: Arial;
+			overflow: hidden;
+			background-color: #333;
+		}
+		.navbar a {
+			text-decoration: none;
+		}
+		.navbar a, .navbar div {
+			float: left;
+		}
+		.navbar a, .dropdown .dropbtn {
+			font-size: 16px;
+			padding: 14px 16px;
+		}
+		.navbar a:hover, .navbar div:hover .dropbtn, .dropbtn:focus {
+			background-color: red;
+		}
+		.navbar a, .dropdown .dropbtn {
+			color: white;
+		}
+		.dropdown .dropbtn {
+			cursor: pointer;
+			border: none;
+			background-color: inherit;
+			outline: none;
+		}
+		.dropdown-content {
+			display: none;
+			background-color: #f9f9f9;
+			position: absolute;
+			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+		}
+		.dropdown-content a {
+			display: block;
+			float: none;
+			color: black;
+		}
+		.dropdown-content a:hover {
+			background-color: #ddd;
+		}
+		.show {
+			display: block;
+		}
+	</style>
 </head>
 <body>
-<p><a href="/projects/references-translate/" target="_blank">Помощник перевода списка литературы для научного журнала</a></p>
-<p><a href="/projects/programmers-day/" target="_blank">Узнать, когда будет день программиста</a></p>
+<div class="navbar">
+	<a href="https://github.com/edpop">Home</a>
+	<div class="dropdown">
+		<button class="dropbtn">Tools ▼</button>
+		<div class="dropdown-content">
+			<a href="/projects/references-translate/" target="_blank">Помощник перевода списка литературы для научного журнала</a>
+			<a href="/projects/programmers-day/" target="_blank">Узнать, когда будет день программиста</a>
+		</div>
+	</div>
+</div>
 </body>
+<script>
+/**
+ * Dropdown toggle
+ */
+const dropButtons = document.getElementsByClassName("dropbtn");
+const dropDownContent = document.getElementsByClassName("dropdown-content");
+for (let i=0; i< dropButtons.length; ++i) {
+	dropButtons[i].onclick = () => {
+		for (let j=0; j<dropDownContent.length; ++j) {
+			dropDownContent[j].classList.toggle("show");
+		}
+	};
+}
+window.onclick = (e) => {
+	if (!e.target.matches(".dropbtn")) {
+		for (let j=0; j<dropDownContent.length; ++j) {
+			if (dropDownContent[j].classList.contains("show")) {
+				dropDownContent[j].classList.remove("show");
+			};
+		}
+	}
+};
+</script>
 </html>
