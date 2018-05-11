@@ -59,6 +59,22 @@
 		.show {
 			display: block;
 		}
+		#main {
+			top: 20%;
+			left: 20vw;
+			width: 60vw;
+			position: absolute;
+			font-family: Georgia, serif;
+		}
+		#main h1 {
+			font-size: 6vh;
+		}
+		#main p {
+			font-size: 3vh;
+		}
+		#links {
+			font-size: 2.5vh;
+		}
 	</style>
 </head>
 <body>
@@ -73,6 +89,14 @@
 	</div>
 	<a href="#" class="lang" data-lang="ru">RU</a>
 	<a href="#" class="lang active" data-lang="en">EN</a>
+</div>
+<div id="main">
+	<h1 class="tr" data-trid="bio-head">Eduard Popov</h1>
+	<div class="tr" data-trid="bio">
+		<p>Hi! I'm a software engineer. Contributing to open source programs. I'm open to interesting projects.</p>
+		<p>Also I'm engaged in music. For today I serve in the army.</p>
+	</div>
+	<a id="links" href="mailto:ed.popov.ru@yandex.ru">email</a>
 </div>
 </body>
 <script>
@@ -106,7 +130,10 @@
 (function () {
 	const tr = {
 		"home": "Домой",
-		"tools": "Инструменты ▼"
+		"tools": "Инструменты ▼",
+		"bio-head": "Эдуард Попов",
+		"bio": "<p>Привет! Я инженер-программист. Поддерживаю развитие программ с открытым исходным кодом. Открыт к интересным проектам.</p>" +
+               "<p>Увлекаюсь музыкой. На текущий момент прохожу службу в армии.</p>"
 	};
 	const translations = {};
 	const elementsTr = document.getElementsByClassName("tr");
