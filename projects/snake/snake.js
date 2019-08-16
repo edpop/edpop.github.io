@@ -61,40 +61,13 @@ class Point {
 class Snake {
   constructor (head_x, head_y, length, direction) {
     this.coords = new Array(length);
-    this.direction = direction;
-    this.lastMovedDirection = this.direction;
+    this.direction = this.lastMovedDirection = direction;
     for (let i = 0; i < length; i++) {
       this.coords[i] = new Point(
         head_x - this.dx*i,
         head_y - this.dy*i
       );
     }
-
-    // TODO: добавить поддержку для пальцев
-    // window.addEventListener("touchstart", (event) => {
-    //   console.log(event);
-    // }, false);
-
-    window.addEventListener("keydown", (event) => {
-      const keyMap = {
-        39: DIRECTIONS.RIGHT,
-        37: DIRECTIONS.LEFT,
-        38: DIRECTIONS.TOP,
-        40: DIRECTIONS.BOTTOM
-      }
-      const direction = keyMap[event.keyCode];
-      if (direction === undefined)
-        return;
-      if (
-        (direction === DIRECTIONS.RIGHT || direction === DIRECTIONS.LEFT) &&
-        (this.lastMovedDirection === DIRECTIONS.RIGHT || this.lastMovedDirection === DIRECTIONS.LEFT)
-      ) return;
-      if (
-        (direction === DIRECTIONS.TOP || direction === DIRECTIONS.BOTTOM) &&
-        (this.lastMovedDirection === DIRECTIONS.TOP || this.lastMovedDirection === DIRECTIONS.BOTTOM)
-      ) return;
-      this.direction = direction;
-    }, false);
   }
   get dx () {
     return this.direction === DIRECTIONS.RIGHT ? 1 : this.direction === DIRECTIONS.LEFT ? -1 : 0;
@@ -111,12 +84,12 @@ class Snake {
 class SnakeGame {
   constructor (containerId) {
     this.gameOver = false;
+    this.score = 0;
     this.container = document.getElementById(containerId);
     this.container.style["background"] = "grey";
     this.container.style["font-size"] = "40pt";
     this.container.style["font-family"] = "Courier New";
     this.container.style["text-align"] = "center";
-    this.container.style["line-height"] = this.container.offsetHeight + "px";
     this.ground = new Ground(GP.groundWitdh, GP.groundHeight);
     this.tickDuration = 1000;
 
@@ -130,9 +103,12 @@ class SnakeGame {
       this.container.appendChild(columnContainer);
       for (let j = 0; j < this.ground.height; j++) {
         const fieldContainer = document.createElement('div');
+        fieldContainer.setAttribute("data-field-x", i);
+        fieldContainer.setAttribute("data-field-y", j);
         fieldContainer.style.width = fieldWidth + "px";
         fieldContainer.style.height = fieldHeight + "px";
         /* DEBUG */
+        //fieldContainer.id = i + '; ' + j;
         // fieldContainer.style["font-size"] = "8pt"
         // fieldContainer.innerHTML = i + "; " + j;
         // fieldContainer.style.color = (i+j) % 2 === 0 ? 'red' : 'blue';
@@ -187,6 +163,48 @@ class SnakeGame {
       const bodyCoords = this.snake.coords[i];
       this.fields[bodyCoords.x][bodyCoords.y].draw(SNAKE_PARTS.BODY);
     }
+    // TODO: добавить поддержку для пальцев
+    window.addEventListener("touchstart", (event) => {
+      const x = event.target.getAttribute("data-field-x");
+      const y = event.target.getAttribute("data-field-y");
+      if (x && y) {
+        const headCoords = this.snake.coords[0];
+        if ((this.snake.lastMovedDirection === DIRECTIONS.RIGHT || this.snake.lastMovedDirection === DIRECTIONS.LEFT)) {
+          if (headCoords.y > y) {
+            this.snake.direction = DIRECTIONS.TOP;
+          } else if (headCoords.y < y) {
+            this.snake.direction = DIRECTIONS.BOTTOM;
+          }
+        } else {
+          if (headCoords.x > x) {
+            this.snake.direction = DIRECTIONS.LEFT;
+          } else if (headCoords.y < y) {
+            this.snake.direction = DIRECTIONS.RIGHT;
+          }
+        }
+      }
+    }, false);
+
+    window.addEventListener("keydown", (event) => {
+      const keyMap = {
+        39: DIRECTIONS.RIGHT,
+        37: DIRECTIONS.LEFT,
+        38: DIRECTIONS.TOP,
+        40: DIRECTIONS.BOTTOM
+      }
+      const direction = keyMap[event.keyCode];
+      if (direction === undefined)
+        return;
+      if (
+        (direction === DIRECTIONS.RIGHT || direction === DIRECTIONS.LEFT) &&
+        (this.snake.lastMovedDirection === DIRECTIONS.RIGHT || this.snake.lastMovedDirection === DIRECTIONS.LEFT)
+      ) return;
+      if (
+        (direction === DIRECTIONS.TOP || direction === DIRECTIONS.BOTTOM) &&
+        (this.snake.lastMovedDirection === DIRECTIONS.TOP || this.snake.lastMovedDirection === DIRECTIONS.BOTTOM)
+      ) return;
+      this.snake.direction = direction;
+    }, false);
 
     /* Food */
     this.placeFood();
@@ -215,6 +233,7 @@ class SnakeGame {
     /* Move */
     const ateFood = this.fields[newHeadPos.x][newHeadPos.y].unit === UNIT_TYPES.food;
     if (ateFood) {
+      this.score++;
       this.snake.coords.unshift(newHeadPos);
       this.fields[newHeadPos.x][newHeadPos.y].unit = UNIT_TYPES.void;
       this.placeFood();
@@ -243,7 +262,27 @@ class SnakeGame {
       this.update();
       if (this.gameOver) {
         this.container.style["background"] = "RGB(143,43,55)";
-        this.container.innerHTML = "<b>GAME OVER</b>";
+
+        const createOverlapText = (content) => {
+          const div = document.createElement("div");
+          div.style.position = "absolute";
+          div.style["text-align"] = "center";
+          div.style.width = this.container.offsetWidth + "px";
+          return div;
+        }
+        const gameOverDiv = createOverlapText();
+        gameOverDiv.innerHTML = "<b>GAME OVER</b>";
+        gameOverDiv.style["line-height"] = this.container.offsetHeight - 40 + "px";
+        const scoreDiv = createOverlapText();
+        //scoreDiv.innerHTML = "Your score: <b>" + this.score + "</b>";
+        scoreDiv.innerHTML = "Your score: " + this.score;
+        scoreDiv.style["line-height"] = this.container.offsetHeight + 40 + "px";
+        scoreDiv.style["font-size"] = "24pt";
+        this.container.innerHTML = "";
+        this.container.appendChild(gameOverDiv);
+        this.container.appendChild(scoreDiv);
+        //this.container.innerHTML = "<b>GAME OVER</b>" +
+        //"Your score: <b>" + this.score + "</b></p>";
       } else {
         setTimeout(tick, this.tickDuration); // TODO: выровнять время
       }
